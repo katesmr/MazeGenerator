@@ -2,7 +2,7 @@
   "name": "maze",
   "version": "0.0.1",
   "license": "MIT",
-  "main": "src/app/main.js",
+  "main": "src/js/Maze.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack --config webpack.config.js"
   },

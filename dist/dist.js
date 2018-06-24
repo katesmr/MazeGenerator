@@ -64,7 +64,7 @@ var maze =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -74,7 +74,23 @@ var maze =
 "use strict";
 
 
-var utils = __webpack_require__(1);
+module.exports = {
+    "randomInteger": randomInteger
+};
+
+function randomInteger(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
 
 module.exports = Maze;
 
@@ -182,35 +198,6 @@ Maze.prototype.nextCell = function(x, y, cellSide){
     return result;
 };
 
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    "randomInteger": randomInteger
-};
-
-function randomInteger(min, max){
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Maze = __webpack_require__(0);
-
-var maze = new Maze(5, 4);
-maze.generate(2, 1);
-console.log(maze.maze);
 
 /***/ })
 /******/ ]);
