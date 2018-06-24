@@ -1,0 +1,14 @@
+{
+  "name": "maze",
+  "version": "0.0.1",
+  "license": "MIT",
+  "main": "src/app/main.js",
+  "scripts": {
+    "build": "./node_modules/.bin/webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "webpack": "^2.2.1",
+    "strict-loader": "1.2.0"
+  },
+  "dependencies": {}
+}
