@@ -4,6 +4,7 @@ var Cell = require("./Cell.js");
 module.exports = Maze;
 
 var wallCount = 4;
+var walls = ["top", "right", "bottom", "left"];
 
 function Maze(width, height){
     this.width = width;
@@ -36,61 +37,52 @@ Maze.prototype.get = function(x, y){
  * @param y - start y point
  */
 Maze.prototype.generate = function(x, y){
-    var currentCell;
+    var currentCell, wall, i;
     var nextCell = null;
     currentCell = this.get(x, y); // check what it valid
+    utils.shuffleArray(walls);
     console.log(x, y);
-    console.log(currentCell);
-    switch(utils.randomInteger(0, wallCount)){
-        case 0: // top
-            console.log("top");
-            nextCell = this.get(currentCell.x, (currentCell.y)-1);
-            if(nextCell && currentCell.topWall === false){
-                currentCell.topWall = true;
-                nextCell.bottomWall = true;
-            } else{
-                // busy or don't exist
-                nextCell = null;
+    for(i = 0; i < walls.length; ++i){
+        wall = walls[i];
+        if(currentCell[wall] === false){
+            switch(wall){
+                case "top":
+                    console.log("top");
+                    nextCell = this.get(x, y-1);
+                    if(nextCell){
+                        currentCell.top = true;
+                        nextCell.bottom = true;
+                        this.generate(x, y-1);
+                    }
+                    break;
+                case "right":
+                    console.log("right");
+                    nextCell = this.get(x+1, y);
+                    if(nextCell){
+                        currentCell.right = true;
+                        nextCell.left = true;
+                        this.generate(x+1, y);
+                    }
+                    break;
+                case "bottom":
+                    console.log("bottom");
+                    nextCell = this.get(x, y+1);
+                    if(nextCell){
+                        currentCell.bottom = true;
+                        nextCell.top = true;
+                        this.generate(x, y+1);
+                    }
+                    break;
+                case "left":
+                    console.log("left");
+                    nextCell = this.get(x-1, y);
+                    if(nextCell){
+                        currentCell.left = true;
+                        nextCell.right = true;
+                        this.generate(x-1, y);
+                    }
+                    break;
             }
-            break;
-        case 1: // right
-            console.log("right");
-            nextCell = this.get((currentCell.x)+1, currentCell.y);
-            if(nextCell && currentCell.rightWall === false){
-                currentCell.rightWall = true;
-                nextCell.leftWall = true;
-            } else{
-                // busy or don't exist
-                nextCell = null;
-            }
-            break;
-        case 2: // bottom
-            console.log("bottom");
-            nextCell = this.get(currentCell.x, (currentCell.y)+1);
-            if(nextCell && currentCell.bottomWall === false){
-                currentCell.bottomWall = true;
-                nextCell.topWall = true;
-            } else{
-                // busy or don't exist
-                nextCell = null;
-            }
-            break;
-        case 3: // left
-            console.log("left");
-            nextCell = this.get((currentCell.x)-1, currentCell.y);
-            if(nextCell && currentCell.leftWall === false){
-                currentCell.leftWall = true;
-                nextCell.rightWall = true;
-            } else{
-                // busy or don't exist
-                nextCell = null;
-            }
-            break;
-    }
-    if(nextCell !== null){
-        this.generate(nextCell.x, nextCell.y)
-    } else{
-        //this.generate(x, y);
-        return null;
+        }
     }
 };

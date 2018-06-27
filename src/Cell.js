@@ -1,19 +1,8 @@
 module.exports = Cell;
 
-function Cell(x, y){
-    this.x = x;
-    this.y = y;
-    this.topWall = false;
-    this.rightWall = false;
-    this.bottomWall = false;
-    this.leftWall = false;
+function Cell(){
+    this.top = false;
+    this.right = false;
+    this.bottom = false;
+    this.left = false;
 }
-
-Cell.prototype.getCoord = function(){
-    return [this.x, this.y];
-};
-
-Cell.prototype.setCoord = function(x, y){
-    this.x = x;
-    this.y = y;
-};
