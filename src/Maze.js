@@ -48,7 +48,7 @@ Maze.prototype.generate = function(x, y){
                 switch(wall){
                     case "top":
                         nextCell = this.get(x, y-1);
-                        if(nextCell){
+                        if(nextCell && !nextCell.isVisited){
                             currentCell.top = true;
                             nextCell.bottom = true;
                             this.generate(x, y-1);
@@ -56,7 +56,7 @@ Maze.prototype.generate = function(x, y){
                         break;
                     case "right":
                         nextCell = this.get(x+1, y);
-                        if(nextCell){
+                        if(nextCell && !nextCell.isVisited){
                             currentCell.right = true;
                             nextCell.left = true;
                             this.generate(x+1, y);
@@ -64,7 +64,7 @@ Maze.prototype.generate = function(x, y){
                         break;
                     case "bottom":
                         nextCell = this.get(x, y+1);
-                        if(nextCell){
+                        if(nextCell && !nextCell.isVisited){
                             currentCell.bottom = true;
                             nextCell.top = true;
                             this.generate(x, y+1);
@@ -72,7 +72,7 @@ Maze.prototype.generate = function(x, y){
                         break;
                     case "left":
                         nextCell = this.get(x-1, y);
-                        if(nextCell){
+                        if(nextCell && !nextCell.isVisited){
                             currentCell.left = true;
                             nextCell.right = true;
                             this.generate(x-1, y);
