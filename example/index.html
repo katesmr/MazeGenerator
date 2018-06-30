@@ -4,10 +4,13 @@
 	<meta charset="UTF-8">
 </head>
 <body>
+	<canvas id="maze" width=400 height=500></canvas>
 	<script src="../dist/dist.js"></script>
 	<script>
-		var mazeObject = new maze(4, 5);
+		var mazeObject = new maze.Maze(8, 10);
 		mazeObject.generate(2, 1);
+        var mazeRender = new maze.MazeRender(mazeObject.maze, 30);
+        mazeRender.render();
 		console.log(mazeObject.maze);
 	</script>
 </body>

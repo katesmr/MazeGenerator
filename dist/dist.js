@@ -64,7 +64,7 @@ var maze =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,11 +77,21 @@ var maze =
 module.exports = Cell;
 
 function Cell(){
+    this.isVisited = false;
     this.top = false;
     this.right = false;
     this.bottom = false;
     this.left = false;
 }
+
+Cell.prototype.walls = function(){
+    var result = {};
+    result.top = this.top;
+    result.right = this.right;
+    result.bottom = this.bottom;
+    result.left = this.left;
+    return result;
+};
 
 
 /***/ }),
@@ -91,39 +101,11 @@ function Cell(){
 "use strict";
 
 
-module.exports = {
-    "shuffleArray": shuffleArray,
-    "randomInteger": randomInteger
-};
-
-function randomInteger(min, max){
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function shuffleArray(array){
-    var i, j, temp;
-    for(i = array.length-1; i > 0; --i) {
-        j = Math.floor(Math.random() * (i + 1));
-        temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-}
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(1);
+var utils = __webpack_require__(4);
 var Cell = __webpack_require__(0);
 
 module.exports = Maze;
 
-var wallCount = 4;
 var walls = ["top", "right", "bottom", "left"];
 
 function Maze(width, height){
@@ -160,52 +142,151 @@ Maze.prototype.generate = function(x, y){
     var currentCell, wall, i;
     var nextCell = null;
     currentCell = this.get(x, y); // check what it valid
-    utils.shuffleArray(walls);
-    console.log(x, y);
-    for(i = 0; i < walls.length; ++i){
-        wall = walls[i];
-        if(currentCell[wall] === false){
-            switch(wall){
-                case "top":
-                    console.log("top");
-                    nextCell = this.get(x, y-1);
-                    if(nextCell){
-                        currentCell.top = true;
-                        nextCell.bottom = true;
-                        this.generate(x, y-1);
-                    }
-                    break;
-                case "right":
-                    console.log("right");
-                    nextCell = this.get(x+1, y);
-                    if(nextCell){
-                        currentCell.right = true;
-                        nextCell.left = true;
-                        this.generate(x+1, y);
-                    }
-                    break;
-                case "bottom":
-                    console.log("bottom");
-                    nextCell = this.get(x, y+1);
-                    if(nextCell){
-                        currentCell.bottom = true;
-                        nextCell.top = true;
-                        this.generate(x, y+1);
-                    }
-                    break;
-                case "left":
-                    console.log("left");
-                    nextCell = this.get(x-1, y);
-                    if(nextCell){
-                        currentCell.left = true;
-                        nextCell.right = true;
-                        this.generate(x-1, y);
-                    }
-                    break;
+    if(currentCell.isVisited === false){
+        utils.shuffleArray(walls);
+        currentCell.isVisited = true;
+        for(i = 0; i < walls.length; ++i){
+            wall = walls[i];
+            if(currentCell[wall] === false){
+                switch(wall){
+                    case "top":
+                        nextCell = this.get(x, y-1);
+                        if(nextCell){
+                            currentCell.top = true;
+                            nextCell.bottom = true;
+                            this.generate(x, y-1);
+                        }
+                        break;
+                    case "right":
+                        nextCell = this.get(x+1, y);
+                        if(nextCell){
+                            currentCell.right = true;
+                            nextCell.left = true;
+                            this.generate(x+1, y);
+                        }
+                        break;
+                    case "bottom":
+                        nextCell = this.get(x, y+1);
+                        if(nextCell){
+                            currentCell.bottom = true;
+                            nextCell.top = true;
+                            this.generate(x, y+1);
+                        }
+                        break;
+                    case "left":
+                        nextCell = this.get(x-1, y);
+                        if(nextCell){
+                            currentCell.left = true;
+                            nextCell.right = true;
+                            this.generate(x-1, y);
+                        }
+                        break;
+                }
             }
         }
     }
 };
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = MazeRender;
+
+function MazeRender(maze, scale){
+    this.mazeObject = maze;
+    this.scale = scale;
+    this.maze = document.getElementById("maze");
+    this.context = this.maze.getContext("2d");
+}
+
+MazeRender.prototype.renderCell = function(x, y, cell){
+    var wall;
+    var walls = cell.walls();
+    var scaledX = x * this.scale;
+    var scaledY = y * this.scale;
+    this.context.beginPath();
+    this.context.moveTo(scaledX, scaledY);
+    for(wall in walls){
+        if(walls[wall] === false){
+            switch(wall){
+                case "top":
+                    this.context.lineTo(scaledX + this.scale, scaledY);
+                    break;
+                case "right":
+                    this.context.moveTo(scaledX + this.scale, scaledY); // last point of line of top wall
+                    this.context.lineTo(scaledX + this.scale, scaledY + this.scale); // draw right wall down by Y
+                    break;
+                case "bottom":
+                    this.context.moveTo(scaledX, scaledY + this.scale); // last point of line of left wall
+                    this.context.lineTo(scaledX + this.scale, scaledY + this.scale); // draw bottom wall right by X
+                    break;
+                case "left":
+                    this.context.moveTo(scaledX, scaledY); // begin point of line of top wall
+                    this.context.lineTo(scaledX, scaledY + this.scale); // draw right wall down by Y
+                    break;
+            }
+        }
+    }
+    this.context.stroke();
+};
+
+MazeRender.prototype.render = function(){
+    var i, j, row;
+    for(i = 0; i < this.mazeObject.length; ++i){
+        row = this.mazeObject[i];
+        for(j = 0; j < row.length; ++j){
+            this.renderCell(j, i, row[j]);
+        }
+    }
+};
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Maze = __webpack_require__(1);
+var MazeRender = __webpack_require__(2);
+
+module.exports = {
+    "Maze": Maze,
+    "MazeRender": MazeRender
+};
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    "shuffleArray": shuffleArray,
+    "randomInteger": randomInteger
+};
+
+function randomInteger(min, max){
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function shuffleArray(array){
+    var i, j, temp;
+    for(i = array.length-1; i > 0; --i) {
+        j = Math.floor(Math.random() * (i + 1));
+        temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
 
 
 /***/ })

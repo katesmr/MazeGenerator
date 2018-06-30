@@ -3,7 +3,7 @@
 var webpack = require("webpack");
 
 module.exports = {
-    "entry": "./src/Maze.js",
+    "entry": "./src/index.js",
     "module": {
         "loaders": [
             {

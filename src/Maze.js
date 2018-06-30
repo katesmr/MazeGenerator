@@ -3,7 +3,6 @@ var Cell = require("./Cell.js");
 
 module.exports = Maze;
 
-var wallCount = 4;
 var walls = ["top", "right", "bottom", "left"];
 
 function Maze(width, height){
@@ -40,48 +39,46 @@ Maze.prototype.generate = function(x, y){
     var currentCell, wall, i;
     var nextCell = null;
     currentCell = this.get(x, y); // check what it valid
-    utils.shuffleArray(walls);
-    console.log(x, y);
-    for(i = 0; i < walls.length; ++i){
-        wall = walls[i];
-        if(currentCell[wall] === false){
-            switch(wall){
-                case "top":
-                    console.log("top");
-                    nextCell = this.get(x, y-1);
-                    if(nextCell){
-                        currentCell.top = true;
-                        nextCell.bottom = true;
-                        this.generate(x, y-1);
-                    }
-                    break;
-                case "right":
-                    console.log("right");
-                    nextCell = this.get(x+1, y);
-                    if(nextCell){
-                        currentCell.right = true;
-                        nextCell.left = true;
-                        this.generate(x+1, y);
-                    }
-                    break;
-                case "bottom":
-                    console.log("bottom");
-                    nextCell = this.get(x, y+1);
-                    if(nextCell){
-                        currentCell.bottom = true;
-                        nextCell.top = true;
-                        this.generate(x, y+1);
-                    }
-                    break;
-                case "left":
-                    console.log("left");
-                    nextCell = this.get(x-1, y);
-                    if(nextCell){
-                        currentCell.left = true;
-                        nextCell.right = true;
-                        this.generate(x-1, y);
-                    }
-                    break;
+    if(currentCell.isVisited === false){
+        utils.shuffleArray(walls);
+        currentCell.isVisited = true;
+        for(i = 0; i < walls.length; ++i){
+            wall = walls[i];
+            if(currentCell[wall] === false){
+                switch(wall){
+                    case "top":
+                        nextCell = this.get(x, y-1);
+                        if(nextCell){
+                            currentCell.top = true;
+                            nextCell.bottom = true;
+                            this.generate(x, y-1);
+                        }
+                        break;
+                    case "right":
+                        nextCell = this.get(x+1, y);
+                        if(nextCell){
+                            currentCell.right = true;
+                            nextCell.left = true;
+                            this.generate(x+1, y);
+                        }
+                        break;
+                    case "bottom":
+                        nextCell = this.get(x, y+1);
+                        if(nextCell){
+                            currentCell.bottom = true;
+                            nextCell.top = true;
+                            this.generate(x, y+1);
+                        }
+                        break;
+                    case "left":
+                        nextCell = this.get(x-1, y);
+                        if(nextCell){
+                            currentCell.left = true;
+                            nextCell.right = true;
+                            this.generate(x-1, y);
+                        }
+                        break;
+                }
             }
         }
     }
